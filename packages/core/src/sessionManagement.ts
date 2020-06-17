@@ -35,31 +35,37 @@ export function startSessionManagement<TrackingType extends string>(
   let currentSessionId = retrieveActiveSession(sessionCookie).id
 
   const { throttled: expandOrRenewSession } = utils.throttle(() => {
+    synchronizeSession({ canCreate: true })
+  }, COOKIE_ACCESS_DELAY)
+
+  expandOrRenewSession()
+
+  trackActivity(expandOrRenewSession)
+  trackVisibility(() => {
+    synchronizeSession({ canCreate: false })
+  })
+
+  function synchronizeSession({ canCreate }: { canCreate: boolean }) {
     const session = retrieveActiveSession(sessionCookie)
     const { trackingType, isTracked } = computeSessionState(session[productKey])
-    session[productKey] = trackingType
-    if (isTracked && !session.id) {
-      session.id = utils.generateUUID()
-      session.created = String(Date.now())
+
+    if (canCreate) {
+      session[productKey] = trackingType
+      if (isTracked && !session.id) {
+        session.id = utils.generateUUID()
+        session.created = String(Date.now())
+      }
     }
+
     // save changes and expand session duration
     persistSession(session, sessionCookie)
 
     // If the session id has changed, notify that the session has been renewed
-    if (isTracked && currentSessionId !== session.id) {
-      currentSessionId = session.id
+    if (isTracked && session.id && currentSessionId !== session.id) {
       renewObservable.notify()
     }
-  }, COOKIE_ACCESS_DELAY)
-
-  const expandSession = () => {
-    const session = retrieveActiveSession(sessionCookie)
-    persistSession(session, sessionCookie)
+    currentSessionId = session.id
   }
-
-  expandOrRenewSession()
-  trackActivity(expandOrRenewSession)
-  trackVisibility(expandSession)
 
   return {
     getId() {

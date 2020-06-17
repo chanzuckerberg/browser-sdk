@@ -198,6 +198,37 @@ describe('startSessionManagement', () => {
       expectSessionIdToBeDefined(session)
       expectTrackingTypeToBe(session, FIRST_PRODUCT_KEY, FakeTrackingType.TRACKED)
     })
+
+    it('should not renew on visibility after expiration', () => {
+      const session = startSessionManagement(FIRST_PRODUCT_KEY, () => ({
+        isTracked: true,
+        trackingType: FakeTrackingType.TRACKED,
+      }))
+      const renewSessionSpy = jasmine.createSpy()
+      session.renewObservable.subscribe(renewSessionSpy)
+
+      expireSession()
+
+      jasmine.clock().tick(VISIBILITY_CHECK_DELAY)
+
+      expect(renewSessionSpy).not.toHaveBeenCalled()
+      expectSessionIdToNotBeDefined(session)
+    })
+
+    it('should renew on visibility when session id has changed', () => {
+      const session = startSessionManagement(FIRST_PRODUCT_KEY, () => ({
+        isTracked: true,
+        trackingType: FakeTrackingType.TRACKED,
+      }))
+      const renewSessionSpy = jasmine.createSpy()
+      session.renewObservable.subscribe(renewSessionSpy)
+
+      setCookie(SESSION_COOKIE_NAME, 'id=abcdef&first=tracked', DURATION)
+
+      jasmine.clock().tick(VISIBILITY_CHECK_DELAY)
+
+      expect(renewSessionSpy).toHaveBeenCalled()
+    })
   })
 
   describe('multiple startSessionManagement calls', () => {
