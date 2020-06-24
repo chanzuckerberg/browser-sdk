@@ -6,6 +6,7 @@ import {
   Context,
   ContextValue,
   getGlobalObject,
+  ErrorMessage,
   isPercentage,
   makeGlobal,
   makeStub,
@@ -24,7 +25,11 @@ import { startUserActionCollection, UserActionReference } from './userActionColl
 import { startViewCollection } from './viewCollection'
 
 export interface RumUserConfiguration extends UserConfiguration {
-  applicationId: string
+  applicationId: string,
+  //default behavior as if true
+  collectErrorMessage?: boolean,
+  collectErrorStack?: boolean,
+  isCollectingError?: boolean
 }
 
 export interface InternalContext {
@@ -66,7 +71,7 @@ datadogRum.init = monitor((userConfiguration: RumUserConfiguration) => {
   if (userConfiguration.publicApiKey) {
     userConfiguration.clientToken = userConfiguration.publicApiKey
   }
-  const rumUserConfiguration = { ...userConfiguration, isCollectingError: true }
+  const rumUserConfiguration = { isCollectingError: true, ...userConfiguration }
   const lifeCycle = new LifeCycle()
 
   const { errorObservable, configuration, internalMonitoring } = commonInit(rumUserConfiguration, buildEnv)
@@ -81,7 +86,7 @@ datadogRum.init = monitor((userConfiguration: RumUserConfiguration) => {
     startUserActionCollection(lifeCycle)
   }
 
-  errorObservable.subscribe((errorMessage) => lifeCycle.notify(LifeCycleEventType.ERROR_COLLECTED, errorMessage))
+  errorObservable.subscribe((errorMessage) => lifeCycle.notify(LifeCycleEventType.ERROR_COLLECTED, customizeErrorCollection(rumUserConfiguration, errorMessage)))
   requestStartObservable.subscribe((startEvent) => lifeCycle.notify(LifeCycleEventType.REQUEST_STARTED, startEvent))
   requestCompleteObservable.subscribe((request) => lifeCycle.notify(LifeCycleEventType.REQUEST_COMPLETED, request))
 
@@ -113,6 +118,18 @@ function canInitRum(userConfiguration: RumUserConfiguration) {
     return false
   }
   return true
+}
+
+function customizeErrorCollection(userConfiguration: RumUserConfiguration, errorMessage: ErrorMessage): ErrorMessage {
+  if (userConfiguration.collectErrorMessage !== undefined && !userConfiguration.collectErrorMessage) {
+    errorMessage.message = "";
+  }
+
+  if (userConfiguration.collectErrorStack !== undefined && !userConfiguration.collectErrorStack) {
+    errorMessage.context.error.stack = undefined;
+  }
+
+  return errorMessage
 }
 
 interface BrowserWindow extends Window {
