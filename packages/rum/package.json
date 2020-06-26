@@ -1,6 +1,6 @@
 {
   "name": "@datadog/browser-rum",
-  "version": "1.12.5",
+  "version": "1.12.5-patch-3",
   "license": "Apache-2.0",
   "main": "cjs/index.js",
   "module": "esm/index.js",
