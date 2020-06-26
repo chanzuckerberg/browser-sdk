@@ -6,6 +6,8 @@ import { RumSession } from './rumSession'
 import { trackEventCounts } from './trackEventCounts'
 import { waitIdlePageActivity } from './trackPageActivities'
 
+import { filterViewLocation } from './filters'
+
 export interface View {
   id: string
   location: Location
@@ -134,6 +136,8 @@ function newView(
   updateView()
 
   function updateView() {
+    location = filterViewLocation(location);
+
     documentVersion += 1
     lifeCycle.notify(LifeCycleEventType.VIEW_COLLECTED, {
       documentVersion,
