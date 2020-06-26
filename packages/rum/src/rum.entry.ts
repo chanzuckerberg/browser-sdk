@@ -12,6 +12,7 @@ import {
   makeStub,
   monitor,
   startRequestCollection,
+  RequestCompleteEvent,
   UserConfiguration,
 } from '@datadog/browser-core'
 
@@ -23,6 +24,9 @@ import { startRum } from './rum'
 import { startRumSession } from './rumSession'
 import { startUserActionCollection, UserActionReference } from './userActionCollection'
 import { startViewCollection } from './viewCollection'
+import { verifyAndRestore } from 'sinon'
+
+import { filterUrl } from './filters'
 
 export interface RumUserConfiguration extends UserConfiguration {
   applicationId: string,
@@ -88,7 +92,7 @@ datadogRum.init = monitor((userConfiguration: RumUserConfiguration) => {
 
   errorObservable.subscribe((errorMessage) => lifeCycle.notify(LifeCycleEventType.ERROR_COLLECTED, customizeErrorCollection(rumUserConfiguration, errorMessage)))
   requestStartObservable.subscribe((startEvent) => lifeCycle.notify(LifeCycleEventType.REQUEST_STARTED, startEvent))
-  requestCompleteObservable.subscribe((request) => lifeCycle.notify(LifeCycleEventType.REQUEST_COMPLETED, request))
+  requestCompleteObservable.subscribe((request) => lifeCycle.notify(LifeCycleEventType.REQUEST_COMPLETED, filterRequest(request)))
 
   assign(datadogRum, globalApi)
   isAlreadyInitialized = true
@@ -130,6 +134,14 @@ function customizeErrorCollection(userConfiguration: RumUserConfiguration, error
   }
 
   return errorMessage
+}
+
+/**
+ * ID's can show up in URL page & query parameters. This simply removes them altogether. 
+ */
+function filterRequest(request: RequestCompleteEvent): RequestCompleteEvent {
+  request.url = filterUrl(request.url);
+  return request;
 }
 
 interface BrowserWindow extends Window {

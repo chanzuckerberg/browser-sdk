@@ -6,6 +6,8 @@ import { RumSession } from './rumSession'
 import { trackEventCounts } from './trackEventCounts'
 import { waitIdlePageActivity } from './trackPageActivities'
 
+import { filterViewLocation } from './filters'
+
 export interface View {
   id: string
   location: Location
@@ -132,6 +134,8 @@ function newView(
 
   // Initial view update
   updateView()
+
+  location = filterViewLocation(location);
 
   function updateView() {
     documentVersion += 1
