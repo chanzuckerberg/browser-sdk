@@ -1,9 +1,9 @@
 function filterQueryString(queryString: string): string {
-  return queryString.replace(/=[0-9]\d*/, '=XXXXX'); // Query Parameters
+  return queryString.replace(/=[0-9]\d*/gi, '=XXXXX'); // Query Parameters
 }
 
 function filterPath(path: string): string {
-  return path.replace(/\/[0-9]\d*/, '/XXXXX') // Path Parameters
+  return path.replace(/\/[0-9]\d*/gi, '/XXXXX') // Path Parameters
 }
 
 export function filterUrl(url: string): string {
