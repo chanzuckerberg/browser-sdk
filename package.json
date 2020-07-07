@@ -3,7 +3,8 @@
   "description": "browser SDK",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/core",
+    "packages/rum"
   ],
   "scripts": {
     "build": "lerna run build --stream",

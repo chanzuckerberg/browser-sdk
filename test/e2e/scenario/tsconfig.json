@@ -4,7 +4,7 @@
     "strict": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "es6",
     "plugins": [
       {
         "name": "typescript-tslint-plugin"
