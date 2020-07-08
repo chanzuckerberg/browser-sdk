@@ -34,3 +34,6 @@ This repository contains several packages:
 [22]: https://badge.fury.io/js/%40datadog%2Fbrowser-core
 [23]: https://badgen.net/bundlephobia/minzip/@datadog/browser-core
 [24]: https://bundlephobia.com/result?p=@datadog/browser-core
+
+## Fork
+This fork contains several changes that prevent error messages/stack traces and URL query/path parameters from being sent to Datadog.
