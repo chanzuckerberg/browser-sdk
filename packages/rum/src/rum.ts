@@ -443,7 +443,7 @@ export function handleResourceEntry(
     },
     http: {
       performance: computePerformanceResourceDetails(entry),
-      url: entry.name,
+      url: filterUrl(entry.name),
     },
     network: {
       bytesWritten: computeSize(entry),

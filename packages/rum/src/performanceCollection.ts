@@ -4,6 +4,8 @@ import { LifeCycle, LifeCycleEventType } from './lifeCycle'
 import { FAKE_INITIAL_DOCUMENT } from './resourceUtils'
 import { RumSession } from './rumSession'
 
+import { filterUrl } from './filters'
+
 interface BrowserWindow extends Window {
   PerformanceObserver?: PerformanceObserver
 }
@@ -77,7 +79,7 @@ function retrieveInitialDocumentResourceTiming(callback: (timing: PerformanceRes
     const navigationEntry = performance.getEntriesByType('navigation')[0]
     timing = { ...navigationEntry.toJSON() }
   } else {
-    timing = { ...computeRelativePerformanceTiming(), name: window.location.href, decodedBodySize: 0, startTime: 0 }
+    timing = { ...computeRelativePerformanceTiming(), name: filterUrl(window.location.href), decodedBodySize: 0, startTime: 0 }
   }
   timing.entryType = 'resource'
   timing.initiatorType = FAKE_INITIAL_DOCUMENT
