@@ -34,6 +34,8 @@ import { RumSession } from './rumSession'
 import { getUserActionReference, UserActionMeasures, UserActionReference, UserActionType } from './userActionCollection'
 import { viewContext, ViewLoadingType, ViewMeasures } from './viewCollection'
 
+import { filterUrl } from './filters'
+
 export interface PerformancePaintTiming extends PerformanceEntry {
   entryType: 'paint'
   name: 'first-paint' | 'first-contentful-paint'
@@ -181,7 +183,7 @@ export function startRum(
       sessionId: viewContext.sessionId,
       view: {
         id: viewContext.id,
-        referrer: document.referrer,
+        referrer: filterUrl(document.referrer),
         url: viewContext.location.href,
       },
     }),
