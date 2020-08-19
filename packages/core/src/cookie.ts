@@ -1,3 +1,5 @@
+import { getDate } from './time'
+
 export const COOKIE_ACCESS_DELAY = 1000
 
 export interface CookieCache {
@@ -36,7 +38,7 @@ export function cacheCookieAccess(name: string): CookieCache {
 }
 
 export function setCookie(name: string, value: string, expireDelay: number) {
-  const date = new Date()
+  const date = getDate();
   date.setTime(date.getTime() + expireDelay)
   const expires = `expires=${date.toUTCString()}`
   document.cookie = `${name}=${value};${expires};path=/;samesite=strict`
