@@ -6,6 +6,7 @@ import {
   deepMerge,
   ErrorContext,
   ErrorMessage,
+  getDate,
   getTimestamp,
   HttpContext,
   HttpRequest,
@@ -174,7 +175,7 @@ export function startRum(
     session,
     () => ({
       applicationId,
-      date: new Date().getTime(),
+      date: getDate().getTime(),
       session: {
         // must be computed on each event because synthetics instrumentation can be done after sdk execution
         // cf https://github.com/puppeteer/puppeteer/issues/3667

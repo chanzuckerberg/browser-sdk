@@ -5,6 +5,8 @@ import { computeStackTrace } from './tracekit'
 import { Batch, HttpRequest } from './transport'
 import * as utils from './utils'
 
+import { getDate } from './time'
+
 enum StatusType {
   info = 'info',
   error = 'error',
@@ -66,7 +68,7 @@ function startMonitoringBatch(configuration: Configuration) {
       () =>
         utils.deepMerge(
           {
-            date: new Date().getTime(),
+            date: getDate().getTime(),
             view: {
               referrer: document.referrer,
               url: window.location.href,

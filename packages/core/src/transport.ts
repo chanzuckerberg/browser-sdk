@@ -1,6 +1,8 @@
 import { monitor } from './internalMonitoring'
 import { Context, deepMerge, DOM_EVENT, jsonStringify, noop, objectValues } from './utils'
 
+import { getDate } from './time'
+
 // https://en.wikipedia.org/wiki/UTF-8
 const HAS_MULTI_BYTES_CHARACTERS = /[^\u0000-\u007F]/
 
@@ -30,7 +32,7 @@ export class HttpRequest {
 }
 
 function addBatchTime(url: string) {
-  return `${url}${url.indexOf('?') === -1 ? '?' : '&'}batch_time=${new Date().getTime()}`
+  return `${url}${url.indexOf('?') === -1 ? '?' : '&'}batch_time=${getDate().getTime()}`
 }
 
 export class Batch<T> {
