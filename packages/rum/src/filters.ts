@@ -1,13 +1,9 @@
 function filterQueryString(queryString: string): string {
-  // Query Parameters
-  // Match Alphanumeric & numeric strings, ignore just letters
-  return queryString.replace(/=(?![\/a-z_-])[a-zA-Z_0-9]*/g, '=XXXXX');
+  return queryString.replace(/=[0-9]\d*/gi, '=XXXXX'); // Query Parameters
 }
 
 function filterPath(path: string): string {
-  // Path Parameters
-  // Match Alphanumeric & numeric strings, ignore just letters
-  return path.replace(/\/(?![\/a-z_-])[a-zA-Z_0-9]*/g, '/XXXXX');
+  return path.replace(/\/[0-9]\d*/gi, '/XXXXX') // Path Parameters
 }
 
 export function filterUrl(url: string): string {
